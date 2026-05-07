@@ -1,0 +1,177 @@
+schema_version: "1.0"
+
+preset:
+  id: "mde"
+  name: "mde"
+  version: "0.4.0"
+  description: "Scoped-change preset for Spec Kit with impact-driven workflow, capability-aware project memory, and artifact-based status."
+  author: "mde"
+  repository: "https://github.com/mde/speckit-ext"
+  license: "MIT"
+
+requires:
+  speckit_version: ">=0.1.0"
+
+provides:
+  templates:
+    - type: "template"
+      name: "constitution-template"
+      file: "templates/constitution-template-mde-addendum.md"
+      description: "mde constitution guardrails"
+
+    - type: "template"
+      name: "spec-template"
+      file: "templates/spec-template-mde-addendum.md"
+      description: "mde spec template with Change Impact, Target Areas, and capability-aware scope"
+
+    - type: "template"
+      name: "plan-template"
+      file: "templates/plan-template-mde-addendum.md"
+      description: "mde plan template driven by confirmed impacts and target areas"
+
+    - type: "template"
+      name: "tasks-template"
+      file: "templates/tasks-template-mde-addendum.md"
+      description: "mde tasks template derived from confirmed impacts"
+
+    - type: "template"
+      name: "checklist-template"
+      file: "templates/checklist-template-mde-addendum.md"
+      description: "mde checklist template for spec, planning, task, and validation readiness"
+
+    - type: "template"
+      name: "capability-template"
+      file: "templates/capability-template.md"
+      description: "mde capability template (.specify/memory/app/capabilities/<feature>.md), with Documentation back-pointer, Spec History, and Boundaries sections"
+
+  authoritative:
+    - type: "rules"
+      name: "rules-index"
+      file: "RULES.md"
+      description: "Generated index of every preset rule (regenerate with tools/list-rules.js)"
+
+    - type: "algorithm"
+      name: "active-spec-resolution"
+      file: "RESOLUTION.md"
+      description: "Active-spec resolution algorithm used by every primitive that operates on one spec"
+
+    - type: "algorithm"
+      name: "impact-analysis"
+      file: "IMPACT_ANALYSIS.md"
+      description: "Impact analysis: scope, highest-valid-change, before/after data-model, documentation ownership, derived doc impacts, diagram triggers"
+
+    - type: "policy"
+      name: "question-policy"
+      file: "QUESTION_POLICY.md"
+      description: "Question lifecycle and ownership table"
+
+    - type: "validation"
+      name: "preset-validation"
+      file: "PRESET_VALIDATION.md"
+      description: "Post-install validation checklist for the preset"
+
+  defaults:
+    - type: "defaults"
+      name: "architecture-rules"
+      file: "defaults/architecture.md"
+      description: "AR rule definitions used by specify.md to populate the Application Profile"
+
+    - type: "defaults"
+      name: "design-rules"
+      file: "defaults/design-rules.md"
+      description: "DR rule definitions used by specify.md to populate the Application Profile"
+
+    - type: "defaults"
+      name: "technology-stack"
+      file: "defaults/technology-stack.md"
+      description: "Default technology stack defaults; profiles may override"
+
+    - type: "defaults"
+      name: "profile-web-monolith"
+      file: "defaults/profiles/web-monolith.md"
+      description: "Default profile selecting which AR/DR rules apply for a web monolith"
+
+    - type: "defaults"
+      name: "profile-api-only"
+      file: "defaults/profiles/api-only.md"
+      description: "API-only profile"
+
+    - type: "defaults"
+      name: "profile-cli-tool"
+      file: "defaults/profiles/cli-tool.md"
+      description: "CLI tool profile"
+
+    - type: "defaults"
+      name: "profile-event-driven"
+      file: "defaults/profiles/event-driven.md"
+      description: "Event-driven profile"
+
+    - type: "defaults"
+      name: "profile-microservices"
+      file: "defaults/profiles/microservices.md"
+      description: "Microservices profile"
+
+  commands:
+    - type: "command"
+      name: "specify"
+      file: "commands/specify.md"
+      description: "Create a new scoped change spec"
+
+    - type: "command"
+      name: "clarify"
+      file: "commands/clarify.md"
+      description: "Refine the current spec in place"
+
+    - type: "command"
+      name: "next"
+      file: "commands/next.md"
+      description: "Advance the active spec using artifact state and its impact list"
+
+    - type: "command"
+      name: "status"
+      file: "commands/status.md"
+      description: "Read-only summary of current spec, project, or capability status"
+
+    - type: "command"
+      name: "setup"
+      file: "commands/setup.md"
+      description: "Optional alias for creating an initial setup-oriented scoped change"
+
+    - type: "command"
+      name: "constitution"
+      file: "commands/constitution.md"
+      description: "Create or refine project-wide mde guardrails"
+
+    - type: "command"
+      name: "plan"
+      file: "commands/plan.md"
+      description: "Create or update a plan driven by the current spec's impacts and target areas"
+
+    - type: "command"
+      name: "tasks"
+      file: "commands/tasks.md"
+      description: "Create or update tasks derived from the current spec's confirmed impacts"
+
+    - type: "command"
+      name: "checklist"
+      file: "commands/checklist.md"
+      description: "Create or update checklists for the current spec and its downstream artifacts"
+
+    - type: "command"
+      name: "analyze"
+      file: "commands/analyze.md"
+      description: "Audit current spec artifacts for impact coverage, consistency, and readiness"
+
+    - type: "command"
+      name: "implement"
+      file: "commands/implement.md"
+      description: "Execute or finalize the current spec within confirmed target areas"
+
+tags:
+  - "scoped-change"
+  - "change-impact"
+  - "capability"
+  - "project-memory"
+  - "spec-kit"
+  - "mde"
+  - "artifact-status"
