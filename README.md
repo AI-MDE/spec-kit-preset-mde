@@ -270,9 +270,8 @@ specify preset add mde
 
 Manual copy is the current default for experiments:
 ```text
-
-specify extension add https://github.com/AI-MDE/spec-kit-mde.git
-specify preset add https://github.com/AI-MDE/spec-kit-preset-mde.git
+specify preset add mde --from https://github.com/AI-MDE/spec-kit-preset-mde/archive/refs/tags/v0.5.1.zip
+specify extension add mde --from https://github.com/AI-MDE/spec-kit-mde/archive/refs/tags/v0.5.1.zip
 
 ```
 Expected result:
