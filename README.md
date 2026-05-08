@@ -131,11 +131,9 @@ The preset supports that by:
 
 Authoritative (read by agents):
 
-- [RULES.md](RULES.md)
 - [RESOLUTION.md](RESOLUTION.md)
 - [QUESTION_POLICY.md](QUESTION_POLICY.md)
 - [IMPACT_ANALYSIS.md](IMPACT_ANALYSIS.md)
-- [PRESET_VALIDATION.md](PRESET_VALIDATION.md)
 - [commands/](commands/)
 - [templates/](templates/)
 - [defaults/](defaults/)
@@ -143,6 +141,9 @@ Authoritative (read by agents):
 Human reference only (agents must not read from `docs/`):
 
 - [docs/README.md](docs/README.md)
+- [docs/rules.md](docs/rules.md) — generated rule index
+- [docs/preset-validation.md](docs/preset-validation.md) — post-install validation checklist
+- [docs/runtime-context-loading.md](docs/runtime-context-loading.md) — what loads into agent context, when, and why
 - [docs/faq.md](docs/faq.md)
 - [docs/walkthrough-summary.md](docs/walkthrough-summary.md)
 - [docs/terminology.md](docs/terminology.md)
@@ -215,11 +216,24 @@ JSON companion files
 ```text
 preset.yml
 README.md
+RESOLUTION.md
 QUESTION_POLICY.md
-PRESET_VALIDATION.md
+IMPACT_ANALYSIS.md
 docs/
+  README.md
+  rules.md
+  preset-validation.md
+  runtime-context-loading.md
+  architecture.md
+  getting-started.md
+  faq.md
+  walkthrough-summary.md
+  terminology.md
+  capabilities-vs-specs.md
+  user-cases.md
 commands/
 templates/
+defaults/
 ```
 
 Internal primitive commands still exist for direct use and debugging:
@@ -246,22 +260,34 @@ status
 
 ## Install
 
-Manual copy is the current default for experiments:
+Catalog Install 
 
 ```text
-.specify/presets/mde/
+specify extension add mde
+specify preset add mde
+
 ```
 
+Manual copy is the current default for experiments:
+```text
+
+specify extension add https://github.com/AI-MDE/spec-kit-mde.git
+specify preset add https://github.com/AI-MDE/spec-kit-preset-mde.git
+
+```
 Expected result:
 
 ```text
 .specify/presets/mde/
   preset.yml
   README.md
+  RESOLUTION.md
   QUESTION_POLICY.md
+  IMPACT_ANALYSIS.md
   docs/
   commands/
   templates/
+  defaults/
 ```
 
 If your Spec Kit version supports preset CLI commands, use the supported preset install path for your version.

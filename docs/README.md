@@ -2,7 +2,7 @@
 
 Human reference material for the mde preset, ordered for a new reader.
 
-> **Note for AI agents:** this folder is human reference only. Do not read from `docs/` when deciding behavior. Authoritative sources live at the preset root: [`RULES.md`](../RULES.md), [`RESOLUTION.md`](../RESOLUTION.md), [`QUESTION_POLICY.md`](../QUESTION_POLICY.md), [`IMPACT_ANALYSIS.md`](../IMPACT_ANALYSIS.md), [`PRESET_VALIDATION.md`](../PRESET_VALIDATION.md), and [`commands/`](../commands/). See Principle X (Preset Authority) in the constitution addendum.
+> **Note for AI agents:** this folder is human reference only. Do not read from `docs/` when deciding behavior. Authoritative sources live at the preset root: [`RESOLUTION.md`](../RESOLUTION.md), [`QUESTION_POLICY.md`](../QUESTION_POLICY.md), [`IMPACT_ANALYSIS.md`](../IMPACT_ANALYSIS.md), and [`commands/`](../commands/). See Principle X (Preset Authority) in the constitution addendum.
 
 ## Start here
 
@@ -22,6 +22,15 @@ Human reference material for the mde preset, ordered for a new reader.
 - [`../IMPACT_ANALYSIS.md`](../IMPACT_ANALYSIS.md) *(authoritative — agents read this)*
   How impact is analyzed and how `Change Impact` is written.
 
+## Reference (generated / human-only)
+
+- [rules.md](rules.md)
+  Generated index of every rule in the preset. Regenerate with `tools/list-rules.js`.
+- [preset-validation.md](preset-validation.md)
+  Post-install validation checklist consumed by `tools/validate-preset.js` and human reviewers.
+- [runtime-context-loading.md](runtime-context-loading.md)
+  Which files load into agent context, when, and why.
+
 ## Examples
 
 - [user-cases.md](user-cases.md)
@@ -39,5 +48,3 @@ Human reference material for the mde preset, ordered for a new reader.
   Active-spec resolution algorithm.
 - [../QUESTION_POLICY.md](../QUESTION_POLICY.md)
   Question lifecycle and ownership.
-- [../PRESET_VALIDATION.md](../PRESET_VALIDATION.md)
-  Post-install validation checklist.

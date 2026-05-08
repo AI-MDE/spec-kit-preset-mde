@@ -2,6 +2,8 @@
 
 Checklist used after installing the mde preset into a Spec Kit project. Every item should pass before treating the install as ready.
 
+> **Status:** human reference material only. Lives in `docs/` per Principle X — agents must not read this file at runtime. It is consumed by `tools/validate-preset.js` and human reviewers.
+
 Expected install location:
 
 ```text
@@ -15,16 +17,17 @@ Expected install location:
 ```text
 preset.yml
 README.md
-RULES.md
 RESOLUTION.md
 QUESTION_POLICY.md
-PRESET_VALIDATION.md
 IMPACT_ANALYSIS.md
 docs/
   README.md
   terminology.md
   capabilities-vs-specs.md
   user-cases.md
+  rules.md
+  preset-validation.md
+  runtime-context-loading.md
 commands/
   specify.md
   clarify.md
@@ -86,7 +89,7 @@ plan, tasks, analyze, implement, checklist (on demand), constitution
 
 Every primitive that operates on one spec (clarify, plan, tasks, analyze, checklist, implement, next) defers to `RESOLUTION.md` for target selection.
 
-**Pass condition**: each primitive references `../RESOLUTION.md` rather than restating its own resolution rule.
+**Pass condition**: each primitive references `RESOLUTION.md` rather than restating its own resolution rule.
 
 ---
 

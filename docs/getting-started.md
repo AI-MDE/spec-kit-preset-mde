@@ -31,10 +31,11 @@ After install:
   README.md
   RESOLUTION.md
   QUESTION_POLICY.md
-  PRESET_VALIDATION.md
+  IMPACT_ANALYSIS.md
   docs/
   commands/
   templates/
+  defaults/
 ```
 
 ---
@@ -217,7 +218,8 @@ If you want examples:
 If you want to extend the preset:
 
 - [architecture.md](architecture.md) — how the pieces fit
-- [../RESOLUTION.md](../RESOLUTION.md), [../QUESTION_POLICY.md](../QUESTION_POLICY.md), [../PRESET_VALIDATION.md](../PRESET_VALIDATION.md) — shared mechanisms
+- [../RESOLUTION.md](../RESOLUTION.md), [../QUESTION_POLICY.md](../QUESTION_POLICY.md) — shared mechanisms
+- [preset-validation.md](preset-validation.md) — post-install validation checklist (human reference)
 
 ---
 

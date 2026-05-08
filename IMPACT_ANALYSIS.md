@@ -1,86 +1,52 @@
 # Spec Impact Analysis
 
-This document defines how AI should analyze a spec for impact.
+How AI analyzes a spec for impact: reconcile the spec against the existing project model, then decide what each impact creates, modifies, removes, or proposes. Read what already exists before assigning verbs — guessing duplicates, contradicts, or silently overwrites prior decisions.
 
-Impact analysis is not just classification of the spec. It is reconciliation between the spec and the existing project model. The AI must read what already exists before deciding what the spec creates, modifies, removes, or proposes.
-
-The goal is to:
-
-- read the existing project model
-- detect where the spec belongs
-- decide whether each impact creates new content, modifies existing content, removes it, or proposes app-wide changes
-- ask questions when the scope crosses boundaries
-- confirm impact before planning
+The output of this analysis is the spec's `## Change Impact` section, which becomes the working baseline for `plan`, `tasks`, `analyze`, and `implement`.
 
 ---
 
-## Scope
+## Scope hierarchy
+
+Place every change at the **highest valid level**. Do not hide a broader decision inside local implementation work.
 
 ```text
-spec only
-  - bug fix
-  - refactor
-  - local code
-  - local tests
-  - local contracts
+constitution   — project-level governance
+                 → .specify/memory/constitution.md
 
-capability
-  - add or enhance a system capability
-  - capability business requirement
-  - local design decision
+application    — truth that crosses capabilities
+                 → .specify/memory/app/{architecture,data-model,design-rules,
+                                       policies,technology-stack,
+                                       business-requirements,glossary}.md
 
-application
-  - business requirement beyond one capability
-  - glossary
-  - data model
-  - architecture rule
-  - design rule
-  - technology stack
+capability     — one system capability, including its business requirement
+                 and local design decisions
+                 → .specify/memory/app/capabilities/<name>.md
+                 → docs/system/<name>.md, docs/users/<name>.md
+                 → contracts/, plan.md
 
-constitution
-  - project-level governance
+spec only      — bug fix, refactor, local code, local tests, local contracts
+                 → spec.md, tasks.md, source, tests
 ```
+
+When in doubt about which level a change belongs at, ask before planning.
 
 ---
 
-## Highest Valid Change
+## Verbs
 
-Place the change at the highest valid level:
-
-```text
-constitution
-application
-capability
-spec only
-```
-
-Do not hide a broader decision inside local implementation work.
+| Verb | Meaning |
+|---|---|
+| `create` | Target does not yet exist. |
+| `modify` | Target exists; spec changes part of it. For doc files, **merge** new content — never overwrite. |
+| `remove` | Target exists; spec deletes or supersedes it. |
+| `propose` | App-wide change that needs user-approved promotion before landing in memory. |
 
 ---
 
-## Clarify-Step Prompt
+## Read before decide
 
-```text
-Analyze this spec for change impact. If the impact is ambiguous or crosses capability, application, or constitution boundaries, ask clarifying questions before planning.
-```
-
-Use early impact analysis only when it changes the questions.
-
----
-
-## Plan-Step Prompt
-
-```text
-Before planning, analyze this spec for change impact and identify whether it affects only the spec itself, a capability, the application, or the constitution. If the impact crosses boundaries or is ambiguous, ask clarifying questions instead of guessing.
-```
-
-This is the point where impact becomes the working baseline for `plan` and `tasks`.
-
----
-
-## Read Before Decide
-
-Before assigning impacts, read the relevant parts of the existing model:
+Before assigning verbs, read the relevant parts of the existing model:
 
 ```text
 .specify/memory/constitution.md
@@ -94,34 +60,45 @@ Before assigning impacts, read the relevant parts of the existing model:
 .specify/memory/app/glossary.md
 ```
 
-The existing model determines which verb applies:
+The existing model determines verb selection:
 
-- `create` — the target does not yet exist
-- `modify` — the target exists and the spec changes part of it
-- `remove` — the target exists and the spec deletes or supersedes it
-- `propose` — the spec changes app-wide truth that needs user-approved promotion before landing in memory
-
-A spec that wants to "add an audit rule" should not blindly emit `create` if a related rule already lives in `.specify/memory/app/policies.md`. The correct call is usually `modify` (refining the existing rule) or `propose` (when the change is broader than the spec's local concerns).
-
-A spec that wants to "add employee onboarding" should not emit `create` for the capability without first checking `.specify/memory/app/capabilities/`. If the capability already exists, the spec is contributing to it (`modify`), not introducing it.
-
-A spec that touches the data-model should not emit a bare `(modify)` — the before-state has existing rows whose migration is part of the work. See the next section.
-
-When the impact list includes `code` or `data-model`, the spec's `Target Areas` must include the project's operational glue (`package.json` or stack equivalent, `db/`, `migrations/`, `db/seeds/` or equivalent, DB connection config, runtime config). Otherwise the spec authorizes building the feature but forbids wiring it up — code lands but won't run.
-
-Without reading the existing model, the AI risks duplicating, contradicting, or silently overwriting decisions the application already made.
+- "Add an audit rule" → check `policies.md`. If a related rule exists, use `modify` (refining) or `propose` (broader than the spec). Don't blindly `create`.
+- "Add employee onboarding" → check `capabilities/`. If the capability already exists, use `modify`, not `create`.
+- A `data-model` impact is never bare — see [Structural impacts](#structural-impacts-beforeafterconversion) below.
 
 ---
 
-## Data-Model Impact
+## Output shape
 
-Data-model changes have a before-state and an after-state. The spec must capture both, plus the conversion between them. The same shape applies to any structural impact where existing instances must be carried forward.
+Write the result into `## Change Impact` in the spec. Format:
 
-For a `data-model` impact, record:
+```text
+<impact-area>: <target path> (<verb>)
+```
 
-- **before** — relevant entities and fields as they exist in `.specify/memory/app/data-model.md`
+Example:
+
+```text
+- capability: .specify/memory/app/capabilities/employee-onboarding.md (modify)
+- policy: .specify/memory/app/policies.md (propose)
+- code: src/onboarding/ (modify)
+- tests: tests/onboarding/ (modify)
+- system-documentation: docs/system/employee-onboarding.md (modify)
+```
+
+When `code` or `data-model` is in the impact list, `Target Areas` MUST also include the project's operational glue (`package.json` or stack equivalent, `db/`, `migrations/`, `db/seeds/`, DB connection config, runtime config). Otherwise the spec authorizes building the feature but forbids wiring it up — code lands but won't run.
+
+---
+
+## Structural impacts (before/after/conversion)
+
+When the impact carries existing instances forward, record three states, not just the after:
+
+- **before** — relevant entities/fields/rules as they exist today
 - **after** — what the spec proposes
-- **conversion** — how existing data moves from before to after (backfill rules, type transforms, deprecations, constraint sequencing)
+- **conversion** — how existing content moves from before to after (backfill, type transforms, deprecations, constraint sequencing)
+
+Applies to: `data-model`, `architecture`, `policy`, `technology-stack`, `capability` (when splitting, merging, or rescoping).
 
 Example:
 
@@ -137,82 +114,43 @@ Example:
     - add NOT NULL on employment_status after backfill completes
 ```
 
-The same before/after/conversion shape applies to:
-
-- `architecture` — subject or boundary moves (existing files relocate)
-- `policy` — rule changes that re-classify existing records or decisions
-- `technology-stack` — runtime, framework, or storage migrations
-- `capability` — capability splits, merges, or scope changes
-
-Without before/after/conversion, `plan` and `tasks` cannot enumerate the migration work, and `implement` ends up inventing it during execution.
+Without before/after/conversion, `plan` and `tasks` cannot enumerate the migration work, and `implement` invents it during execution.
 
 ---
 
-## Documentation Impact
+## Documentation impact
 
-Documentation has two distinct audiences. mde treats them as separate impact areas:
+Documentation has two audiences, treated as separate impact areas:
 
-```text
-user-documentation    -> docs/users/<feature>.md     (end-user-facing)
-system-documentation  -> docs/system/<feature>.md    (architecture / internals)
-```
+| Impact area | Path | Audience | Trigger |
+|---|---|---|---|
+| `user-documentation` | `docs/users/<feature>.md` | End users | Visible behavior, UI surface, or user-facing policy change. |
+| `system-documentation` | `docs/system/<feature>.md` | Engineers | Structure, contracts, shared logic, multi-step workflow. |
 
-The two have different content, format, and quality bars. Specs that only need one don't have to produce both.
-
-### When the spec needs user-documentation
-
-If the spec produces visible behavior or affects users:
-
-- new business workflow — step-by-step usage walkthrough
-- new UI surface — screenshots when realistic, screen-flow diagram otherwise
-- policy change affecting users — plain-language statement of the rule and what changes for the user
-
-### When the spec needs system-documentation
-
-If the spec changes structure, contracts, or shared logic:
-
-- new capability — describe behavior, contracts, dependencies
-- new architecture or boundary — describe the structure
-- new multi-step workflow — describe the flow
+Specs that need only one don't have to produce both.
 
 ### Diagram requirements
 
-Diagrams are written as Mermaid blocks (text, version-controllable, render natively in GitHub and most IDEs). When the listed trigger impact exists, the corresponding diagram is expected:
+Diagrams are Mermaid blocks (text, version-controllable, render in GitHub and most IDEs).
 
 | Trigger impact | Diagram | Status |
 |---|---|---|
-| `data-model` | ERD (entity-relationship) in system docs | **mandatory** |
+| `data-model` | ERD in system docs | **mandatory** |
 | `architecture` | Component / boundary diagram in system docs | recommended |
 | `code` + multi-step workflow | Sequence diagram in system docs | recommended |
 | `capability` with lifecycle | State diagram in system docs | recommended |
 | `ui-configuration` with multi-screen flow | Screen-flow diagram in user docs | recommended |
 | `ui-configuration` (visible UI) | Screenshots when realistic, otherwise screen-flow diagram | recommended |
 
-When a recommended diagram is omitted, the spec records a one-line justification (e.g. *"single-column policy change, ERD adds no information"*).
-
-The mandatory ERD when `data-model` is in impact exists because data-model changes have the highest cost of being misunderstood downstream — `plan`, `tasks`, and `implement` all read the data shape, and a missing ERD lets each invent its own mental model.
+When a recommended diagram is omitted, record a one-line justification in the spec (e.g. *"single-column policy change, ERD adds no information"*). The mandatory ERD when `data-model` is in impact exists because data-model misunderstandings cascade into `plan`, `tasks`, and `implement` — each invents its own mental model in the absence of a shared one.
 
 ---
 
-## Documentation Ownership
+## Documentation ownership
 
-`docs/users/<feature>.md` and `docs/system/<feature>.md` are **owned by the capability** `<feature>`, not by any individual spec. Multiple specs may touch the same capability over time; the doc files are durable application artifacts and persist across specs.
+`docs/users/<feature>.md` and `docs/system/<feature>.md` are **owned by the capability** `<feature>`, not by any individual spec. Multiple specs touch the same capability over time; the doc files are durable application artifacts.
 
-Verb selection for documentation impacts follows the standard rules:
-
-```text
-system-documentation: docs/system/<feature>.md (create)   - first spec to document the capability
-system-documentation: docs/system/<feature>.md (modify)   - subsequent specs touching the capability
-system-documentation: docs/system/<feature>.md (remove)   - capability is being deleted
-```
-
-`modify` means *merge new content into the existing file*, never overwrite. The capability's living understanding accumulates across specs; each spec contributes its slice and updates the documentation back-pointer in the capability file (see "Capability documentation back-pointer" below).
-
-The same ownership and verb rules apply to `docs/users/<feature>.md`.
-
-### Capability documentation back-pointer
-
-Each capability file (`.specify/memory/app/capabilities/<feature>.md`) carries a `## Documentation` section that names the doc files and the spec that most recently updated each:
+Capability files (`.specify/memory/app/capabilities/<feature>.md`) carry a `## Documentation` back-pointer:
 
 ```md
 ## Documentation
@@ -220,114 +158,44 @@ Each capability file (`.specify/memory/app/capabilities/<feature>.md`) carries a
 - System: docs/system/<feature>.md (last updated by NNN-spec-name)
 ```
 
-`implement` updates the back-pointer whenever it produces or modifies one of those files. `analyze` reads it to verify the spec actually touched the file when it claimed to.
+`implement` updates the back-pointer whenever it touches one of those files. `analyze` reads it to verify the spec actually touched the file when it claimed to.
+
+### Derived documentation impacts
+
+When a spec touches a capability, it MUST also declare the corresponding doc impact (or record a one-line justification for opting out):
+
+| Capability verb | Required doc impact | Opt-out condition |
+|---|---|---|
+| `(create)` | `system-documentation: ... (create)` | Never. |
+| `(create)` | `user-documentation: ... (create)` | Capability has no user-visible behavior. |
+| `(modify)` | `system-documentation: ... (modify)` | Change is purely internal — no contract or behavior visible outside the capability. |
+| `(modify)` | `user-documentation: ... (modify)` | Change has no user-visible effect. |
+| `(remove)` | `system-documentation: ... (remove)` | Never. |
+| `(remove)` | `user-documentation: ... (remove)` | The user-doc file does not exist. |
+
+`analyze` enforces these as a coverage check. A spec missing a derived doc impact without a justification is `NOT READY`.
 
 ---
 
-## Derived Documentation Impacts
+## When this analysis runs
 
-When a spec declares `capability: <feature> (modify)`, the spec MUST also declare:
+Two insertion points, same analysis:
 
-- `system-documentation: docs/system/<feature>.md (modify)` — unless the change is purely internal to the capability (no contract surface, no behavior visible to other code or to users), AND a one-line justification is recorded in the spec.
-- `user-documentation: docs/users/<feature>.md (modify)` — unless the change has no user-visible effect, AND a one-line justification is recorded in the spec.
-
-When a spec declares `capability: <feature> (create)`:
-
-- `system-documentation: docs/system/<feature>.md (create)` — required, no opt-out.
-- `user-documentation: docs/users/<feature>.md (create)` — required if the capability has any user-visible behavior; opt-out requires a one-line justification.
-
-When a spec declares `capability: <feature> (remove)`:
-
-- `system-documentation: docs/system/<feature>.md (remove)` — required.
-- `user-documentation: docs/users/<feature>.md (remove)` — required if the file exists.
-
-The opt-out justification mirrors the existing pattern for recommended diagrams: a single line in the spec stating why the doc impact is unnecessary (e.g. *"refactor of internal helpers, no contract or behavior change visible outside the capability"*).
-
-`analyze` enforces these rules as a coverage check. A spec missing a derived doc impact without a justification is `NOT READY`.
+- **`clarify`** — when the impact is ambiguous or crosses capability/application/constitution boundaries, ask clarifying questions before planning. Use early impact analysis only when it changes the questions.
+- **`plan`** — before producing the plan, run impact analysis as the working baseline. If the impact crosses boundaries or remains ambiguous, ask clarifying questions instead of guessing.
 
 ---
 
-## Output Shape
+## Contract folders
 
-Write the result into:
-
-```md
-## Change Impact
-```
-
-Format:
+Contracts hold callable surfaces and obligations. Use normal Spec Kit artifacts by default; do not add extra mde artifact types unless normal artifacts cannot carry the responsibility.
 
 ```text
-<impact-area>: <target path> (<verb>)
+contracts/api/          - HTTP / RPC endpoints
+contracts/ui/           - pages, routes, views depended on by other flows
+contracts/events/       - emitted/consumed events
+contracts/external/     - third-party APIs the project calls
+contracts/read-models/  - query-side projections
 ```
 
-Example:
-
-```text
-- capability: .specify/memory/app/capabilities/employee-onboarding.md (modify)
-- policy: .specify/memory/app/policies.md (propose)
-- code: src/onboarding/ (modify)
-- tests: tests/onboarding/ (add)
-```
-
-Supported verbs:
-
-```text
-create
-modify
-remove
-propose
-```
-
----
-
-## Typical Artifacts By Scope
-
-Spec only usually involves:
-
-```text
-spec.md
-tasks.md
-code
-tests
-```
-
-Capability usually also involves:
-
-```text
-.specify/memory/app/capabilities/<name>.md
-plan.md
-contracts/
-```
-
-Application usually also involves:
-
-```text
-.specify/memory/app/*
-data-model.md
-design-rules.md
-architecture.md
-technology-stack.md
-```
-
-Constitution involves:
-
-```text
-.specify/memory/constitution.md
-```
-
----
-
-## Contract Guidance
-
-Use normal Spec Kit artifacts by default. Do not add extra mde artifact types unless normal artifacts cannot carry the responsibility.
-
-Contract folders may include:
-
-```text
-contracts/api/
-contracts/ui/
-contracts/events/
-contracts/external/
-contracts/read-models/
-```
+Internal helpers and private components are not contracts.

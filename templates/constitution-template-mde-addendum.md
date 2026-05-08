@@ -138,12 +138,12 @@ Any AI agent working in this repository MUST consult the mde preset before takin
 The preset's authoritative sources are:
 
 ```text
-.specify/presets/mde/RULES.md
-.specify/presets/mde/PRESET_VALIDATION.md
 .specify/presets/mde/RESOLUTION.md
 .specify/presets/mde/QUESTION_POLICY.md
 .specify/presets/mde/IMPACT_ANALYSIS.md
 .specify/presets/mde/commands/
+.specify/presets/mde/templates/
+.specify/presets/mde/defaults/
 ```
 
 `.specify/presets/mde/docs/` is **human reference material only** — getting-started guides, FAQ, walkthroughs, terminology. Agents must not read from `docs/`. Any rule that needs to influence agent behavior must live in one of the authoritative sources above, not in `docs/`.

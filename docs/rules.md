@@ -2,17 +2,19 @@
 
 Generated index of every rule in the mde preset. **Do not edit by hand** — run `node tools/list-rules.js` to regenerate.
 
-Source: `preset/PRESET_VALIDATION.md`, `preset/templates/constitution-template-mde-addendum.md`, `preset/commands/next.md`, `preset/commands/*.md`, `preset/defaults/architecture.md`, `preset/defaults/design-rules.md`.
+> **Status:** human reference material only. Lives in `docs/` per Principle X — agents must not read this file at runtime; the source-of-truth files it summarizes are the authoritative sources.
+
+Source: `preset/docs/preset-validation.md`, `preset/templates/constitution-template-mde-addendum.md`, `preset/commands/next.md`, `preset/commands/*.md`, `preset/defaults/architecture.md`, `preset/defaults/design-rules.md`.
 
 ---
 
 ## Validation Invariants (17)
 
-From `PRESET_VALIDATION.md`. Each item is a pass condition the preset must satisfy after install.
+From [`preset-validation.md`](preset-validation.md). Each item is a pass condition the preset must satisfy after install.
 
 - **1. Required Files** — every command and template referenced in `preset.yml` exists at the path it claims.
 - **2. Command Model** — command files describe creation-only `specify`, refinement-only `clarify`, sequencing-loop `next`, and read-only `status`. No file describes a Business Analysis / App Design / Feature phase model.
-- **3. Active-Spec Resolution** — each primitive references `../RESOLUTION.md` rather than restating its own resolution rule.
+- **3. Active-Spec Resolution** — each primitive references `RESOLUTION.md` rather than restating its own resolution rule.
 - **4. Spec Shape** — a freshly generated spec has all four required sections; impact lines parse against the format; no impact references a path outside the declared `Target Areas`.
 - **5. Read-Before-Decide** — a spec that touches an existing capability uses `(modify)` not `(create)`; a spec that touches an existing policy uses `(modify)` or `(propose)` not `(create)`.
 - **6. Data-Model Impact** — data-model impacts include before/after/conversion notes. Same shape applies to `architecture`, `policy`, `technology-stack`, and `capability` when existing instances must be carried forward.
@@ -32,7 +34,7 @@ From `PRESET_VALIDATION.md`. Each item is a pass condition the preset must satis
 
 ## Constitutional Principles (10)
 
-From `templates/constitution-template-mde-addendum.md`. Project-wide governance principles applied to every spec.
+From [`../templates/constitution-template-mde-addendum.md`](../templates/constitution-template-mde-addendum.md). Project-wide governance principles applied to every spec.
 
 - **I. Spec Kit First** — The project uses normal Spec Kit artifacts as the contract: mde does not create a parallel lifecycle by default.
 - **II. Scoped Change Control** — Work is managed as specs: Each spec must declare:
@@ -49,7 +51,7 @@ From `templates/constitution-template-mde-addendum.md`. Project-wide governance 
 
 ## Auto-Advance Stop Conditions (7)
 
-From `commands/next.md`. The `next` loop halts when any of these fire.
+From [`../commands/next.md`](../commands/next.md). The `next` loop halts when any of these fire.
 
 - **COMPLETE** — implementation and validation evidence support completion.
 - **BLOCKED** — `analyze` reports blockers, or any underlying command returns a blocker.
@@ -63,7 +65,7 @@ From `commands/next.md`. The `next` loop halts when any of these fire.
 
 ## Per-Command Rules (4 sections)
 
-Per-primitive rule sections collected from `commands/*.md`.
+Per-primitive rule sections collected from [`../commands/`](../commands/).
 
 ### `checklist`
 
@@ -116,7 +118,7 @@ Per-primitive rule sections collected from `commands/*.md`.
 
 ## Architecture Defaults (5)
 
-From `defaults/architecture.md`. Recommended structural rules for the default `web-monolith` profile. Alternative profiles in `defaults/profiles/` select different subsets.
+From [`../defaults/architecture.md`](../defaults/architecture.md). Recommended structural rules for the default `web-monolith` profile. Alternative profiles in [`../defaults/profiles/`](../defaults/profiles/) select different subsets.
 
 - **AR-001 Modular Monolith** — Default system style. One deployable application, structured into modules with clear boundaries.
 - **AR-002 Layered Application** — Default structural model: UI/API → Application/Service → Domain → Infrastructure. Each layer depends only on layers below it.
@@ -128,7 +130,7 @@ From `defaults/architecture.md`. Recommended structural rules for the default `w
 
 ## Design Defaults (16)
 
-From `defaults/design-rules.md`. Recommended cross-cutting design rules for the default `web-monolith` profile.
+From [`../defaults/design-rules.md`](../defaults/design-rules.md). Recommended cross-cutting design rules for the default `web-monolith` profile.
 
 - **DR-001 Validation at Domain Layer** — Enforce business invariants in the domain or application/domain boundary, not only in UI or transport validation. Transport validation catches malformed input; domain validation catches invalid state transitions.
 - **DR-002 Data-Access Control via Repositories** — Restrict persistence access to approved repositories or data-access services within the architecture's boundaries. UI and unrelated layers must not issue arbitrary queries.
@@ -153,8 +155,8 @@ From `defaults/design-rules.md`. Recommended cross-cutting design rules for the 
 
 Rules that don't lend themselves to extraction (tabular, prose-heavy, or formatted as algorithms) live in their authoring files:
 
-- [`RESOLUTION.md`](RESOLUTION.md) — active-spec resolution algorithm
-- [`QUESTION_POLICY.md`](QUESTION_POLICY.md) — question lifecycle and ownership table
-- [`commands/status.md`](commands/status.md) — status inference table
-- [`IMPACT_ANALYSIS.md`](IMPACT_ANALYSIS.md) — read-before-decide, highest valid change, data-model before/after, documentation impact, diagram triggers
+- [`../RESOLUTION.md`](../RESOLUTION.md) — active-spec resolution algorithm
+- [`../QUESTION_POLICY.md`](../QUESTION_POLICY.md) — question lifecycle and ownership table
+- [`../commands/status.md`](../commands/status.md) — status inference table
+- [`../IMPACT_ANALYSIS.md`](../IMPACT_ANALYSIS.md) — read-before-decide, highest valid change, data-model before/after, documentation impact, diagram triggers
 

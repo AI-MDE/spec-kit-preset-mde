@@ -45,11 +45,6 @@ provides:
       description: "mde capability template (.specify/memory/app/capabilities/<feature>.md), with Documentation back-pointer, Spec History, and Boundaries sections"
 
   authoritative:
-    - type: "rules"
-      name: "rules-index"
-      file: "RULES.md"
-      description: "Generated index of every preset rule (regenerate with tools/list-rules.js)"
-
     - type: "algorithm"
       name: "active-spec-resolution"
       file: "RESOLUTION.md"
@@ -65,10 +60,21 @@ provides:
       file: "QUESTION_POLICY.md"
       description: "Question lifecycle and ownership table"
 
-    - type: "validation"
+  references:
+    - type: "reference"
+      name: "rules-index"
+      file: "docs/rules.md"
+      description: "Human-readable index of every preset rule (generated; regenerate with tools/list-rules.js). Not loaded into agent runtime context."
+
+    - type: "reference"
       name: "preset-validation"
-      file: "PRESET_VALIDATION.md"
-      description: "Post-install validation checklist for the preset"
+      file: "docs/preset-validation.md"
+      description: "Post-install validation checklist used by tools/validate-preset.js and human reviewers. Not loaded into agent runtime context."
+
+    - type: "reference"
+      name: "runtime-context-loading"
+      file: "docs/runtime-context-loading.md"
+      description: "Human reference: which files load into agent context, when, and why."
 
   defaults:
     - type: "defaults"
